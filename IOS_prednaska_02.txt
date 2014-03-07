@@ -1,0 +1,151 @@
+---------------------------------------------------
+---------------------------------------------------
+IOS - Přednáška 2 - 20.2.2014 - Prof. Ing. Vojnar
+---------------------------------------------------
+---------------------------------------------------
+
+---------------------------------------------------
+Vzdálený přístup přes X-Window
+---------------------------------------------------
+Spouštění aplikací s GUI ze vzdáleného počítače:
+a1) na lokálním počítači/systému použijeme příkaz "xhost JMENO_POČÍTAČE (z kterého chceme spouštět aplikace)"
+např. "xhost merlin"
+a2) na vzdáleném počítači/systému použijeme příkaz "export DISPLAY=MŮJ_POČÍTAČ:ČÍSLO_DISPLEJE (čísluje se od nuly)"
+např. "export DISPLAY=pi:0"
+b) tunelování přes ssh (secure shell): "ssh -X (-X = chci tunelovat okénka)"
+
+Vnořené GUI ze vzdáleného počítače -> příkaz "Xnest" = přenese kompletní grafické rozhraní (pokud to podporuje systém/daný počítač)
+
+---------------------------------------------------
+VIM
+---------------------------------------------------
+
+Insert mode (vkládací režim)
+---------------------------------------------------
+- a = append (přidá za aktuální pozici -> na úrovni písmenek)
+- A = append (přidá za aktuální pozici -> na úrovni řádků)
+- i = insert (vloží před aktuální pozici -> na úrovni písmenek)
+- I = insert (vloží před aktuální pozici -> na úrovni řádků)
+- o (vloží prázdný řádek -> za aktuální řádek)
+- O (vloží prázdný řádek -> před aktuální řádek) 
+- r = replace (nahradí -> nahradí daný znak)
+- R = replace (nahradí -> od dané pozice dál)
+
+ESC = z "Insert mode" do "Command mode"
+
+Mazání
+---------------------------------------------------
+- x (maže předchozí písmeno)
+- X (maže následující písmeno)
+- dd (maže po řádcích)
+- d + HOME (maže po začátek řádku)
+- d + END (maže po konec řádku)
+- d + "{" (maže do začátku odstavce)
+- d + "}" (maže do konce odstavce)
+- dtX = delete to X (smaže po zadaný znak X)
+- d/ (maže po zadané slovo/regulární výraz)
+- u = undo (zpět)
+
+Vložení (stejně jako u mazání "d + X")
+---------------------------------------------------
+- c = change 
+- y = copy 
+- p/P = paste
+- v (vyznačování po znacích)
+- SHIFT + v (vyznačování po řádcích)
+
+Další příkazy
+---------------------------------------------------
+- . (opakování posledního výrazu/příkazu)
+- / (vyhledávání)
+
+Command line (příkazový řádek) - pomocí ":"
+---------------------------------------------------
+- q =  quit (ukončit/uzavřít)
+- q! = quit (ukončit a neptat se zda má ukládat) 
+- wq = write and quit (zapiš a ukonči)
+
+Příkazový řádek - příkaz "s" = substitute
+---------------------------------------------------
+- s = substitute (nahrazení výrazu výrazem, např.: "řádky s/ regulární výraz / regulární výraz (/g)")
+
+přepínač /g = pokud se na řádku vyskytuje daná konstrukce vícekrát, pomocí přepínače /g říkáme, aby se upravili všechny výskyty
+
+Příklad: ":%s/\([0-9]*\)\([0-9]\)/\1.\2/" 
+-> v textovém souboru vydělí všechny čísla desíti = provede se substituce na všech řádcích ("%s"); všechny texty, které se skládají alespoň z jednoho výskytu číslice  ..... DOPSAT (záznam IOS_2014-02-20 - čas 2:14:00)
+
+---------------------------------------------------
+Regulární výrazy
+---------------------------------------------------
+- "." = jeden libovolný znak
+- "*" = 0 až n výskytů předchozího znaku
+- "[množina znaků]" = jeden znak z množiny, např.: [0-9] = 0,1,2,...,9; [ABC] = A,B,C
+- "[^množina znaků]" = jeden znak, který není v dané množině (doplněk)
+- "\" = ruší řídící význam následujícího znaku, např. \. -> zapíše se tečka, jinak by se brala jako libovolný znak (POZN: "\" = "beksleš")
+- "^" = začátek řádku, např.: vyhledávání na začátku řádku
+- "$" = konec řádku, např.: vyhledávání na konci řádku
+- "[[:k:]]" = znak z dané kategorie k podle locale (podle aktuální lokace/nastavení jazyka -> viz "man 5 locale")
+
+Příklad: "^ *\* [0-9][0-9]* *$" = vyhledávej od začátku ("^") po konec ("$") řádku, libovolný počet mezer (" *") a hvězdička ("*"), potom právě jedna mezera (" "), následně jeden znak od 0 do 9 ("[0-9]") a libovolný počet znaků od 0 do 9 ("[0-9]*) a nakonec libovolný počet mezer (" *")
+
+---------------------------------------------------
+Základní dokumentace v UNIXu
+---------------------------------------------------
+Dostupná pomocí příkazů "man" a "info" -> např.: "man ls", "info ls"
+
+Man
+---------------------------------------------------
+Základní syntaxe: man ČÍSLO_SEKCE PŘÍKAZ_COMMAND_HESLO
+
+Rozdělení do sekcí:
+1. Executable programs or shell commands = proveditelné programy a příkazy shellu (utility a systémové shellové příkazy)
+2. System calls (functions provided by the kernel) = systémová volání (volání jádra prostřednictvím knihoven jádra - např. write, exit)
+3. Library calls (functions within program libraries) = knihovní volání (volání poskytované knihovnami - např. C knihovnami)
+4. Special files (usually found in "/dev") = speciální soubory (rozhraní k zařízením)
+5. File formats and conventions, e.g., "/etc/passwd" = formáty souborů a zvyklosti (např.: záznamy o uživatelích v souboru "/etc/passwd")
+6. Games
+7. Miscellaneous (including macro packages and conventions) = různé (nevešli se jinam)
+8. System administration commands (usually only for root) = systémové příkazy
+9. Kernel routines (Non standard) = nestandardní rutiny jádra
+
+! stejné heslo se může vyskytovat ve více kapitolach (např.: "man passwd" != "man 5 passwd") !
+
+Příkaz "apropos NAME" = kde všude se v "man" mluví o "NAME"
+
+---------------------------------------------------
+Bourne shell
+---------------------------------------------------
+Většinou budeme používat "Bourne agian shell" nástupce "Bourne shellu" -> má některá vylepšení oproti "Bourne shellu" -> ovšem ty NEJSOU podporovány všude
+
+Skriptování
+---------------------------------------------------
+• Interpret: program, který provádí činnost programu, který je jeho vstupem.
+• Skript: textový soubor s programem pro interpret.
+• Nevýhody: pomalejší, je třeba interpret.
+• Výhody: nemusí se překládat (okamžitě spustitelné), čitelný obsah programu.
+
+Spuštění skriptu v UNIXu
+---------------------------------------------------
+sh skript.sh        # explicitní volání interpretu (většinou bash, dash, ksh)
+
+chmod +x skript.sh  # nastaví příznak spustitelnosti (přidá právo provádění pro všechny)
+./skript.sh         # spuštění (v subshellu)
+
+. ./skript.sh       # spuštění v aktuální shellu
+
+Příkaz "ls -l" -> informace o souborech s jejich právy
+Příkaz "chmod u+x skript.sh" -> přidá právo provádění jen mě
+
+! při spuštění skriptu se otevře nový subshell -> nepřenáší se do něj parametry a změny provedené v subshellu se neprojeví v shellu (viz záznam IOS_2014-02-20 - čas 2:29:00)
+
+Magic number (magické číslo) 
+---------------------------------------------------
+= číslo uvedené na začátku souboru a charakterizující jeho obsah
+
+Příklady:
+#!/bin/sh - skript pro Bourne shell
+#!/bin/ksh - skript pro Korn shell
+#!/bin/csh - skript pro C shell
+#!/usr/bin/perl - skript v Perlu
+#!/usr/bin/python - skript v Pythonu
+\177ELF - binární program - formát ELF
